@@ -1,0 +1,223 @@
+/*
+ * White panel — "Mobile reference 2". Container units again: cqw is the design column,
+ * cqh is the panel's height. Source pixels are on a 1179-wide reference whose white
+ * panel runs from y 134 to y 2364.
+ */
+
+.path {
+  position: relative;
+  z-index: 1;
+  background: var(--white);
+  color: var(--black);
+}
+
+/* Buffer between the border and the first line of text — see ChoosePath.tsx. */
+.lead {
+  height: 45svh;
+}
+
+/*
+ * One viewport tall in its own right — .path is now taller than this because of the
+ * lead above, so this can't inherit its height as a percentage. Everything inside is
+ * still positioned in container units against this box, so the reference measurements
+ * are untouched.
+ */
+.inner {
+  position: relative;
+  height: 100svh;
+  width: var(--content-w);
+  margin: 0 auto;
+  container-type: size;
+}
+
+/*
+ * who-are-you.png is 1400 x 312 cropped to its ink, which fills x 0-1387 and y 19-311.
+ * The wrapper is sized so the *ink* comes out at 81.9cqw wide, and `top` subtracts the
+ * ink's own offset inside the file so the ink centre lands at 14.19cqh.
+ */
+.question {
+  position: absolute;
+  margin: 0;
+  left: 8.65cqw;
+  width: 82.61cqw;
+  top: calc(14.19cqh - 9.766cqw);
+}
+
+.question img {
+  width: 100%;
+  height: auto;
+}
+
+/* Text is placed by its baseline, which is how the reference was measured. */
+.choice {
+  position: absolute;
+  color: var(--ink);
+  line-height: 1;
+  white-space: nowrap;
+  font-size: 14.4cqw;
+  transform: translateY(calc(-1 * var(--baseline)));
+}
+
+.choice:hover {
+  opacity: 0.6;
+}
+
+.artist {
+  left: 8.14cqw;
+  top: 35.61cqh;
+}
+
+.producer {
+  right: 8.91cqw;
+  top: 50.18cqh;
+}
+
+/*
+ * Both bar files share one canvas (1200 x 225, ink 79px tall starting at the left
+ * edge), so both render at the same element width and the ink comes out the same
+ * height — dotted-bar-2 simply has shorter ink. 7.772cqw is the ink's own centre
+ * offset inside the file, subtracted so the centreline lands where the reference has it.
+ */
+.bar {
+  position: absolute;
+  display: block;
+  width: 50.28cqw;
+}
+
+.bar:hover {
+  opacity: 0.6;
+}
+
+.bar img {
+  width: 100%;
+  height: auto;
+}
+
+.artistBar {
+  left: 41.47cqw;
+  top: calc(33.48cqh - 7.772cqw);
+}
+
+.producerBar {
+  left: 6.95cqw;
+  top: calc(48.05cqh - 7.772cqw);
+}
+
+.socials {
+  position: absolute;
+  left: 50%;
+  top: 65.83cqh;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+/*
+ * The halftone that closes the page out in black. It sits outside .inner so it runs the
+ * full width of the panel rather than the design column, and is anchored to the bottom
+ * 100svh — i.e. exactly the .inner box, not the panel including its lead.
+ *
+ * .fade is the clipping box; .fadeInner is the artwork, hung 19.56svh lower so it runs
+ * off the bottom. The artwork's dots start at 50.63% of the file and it's solid black
+ * for the last 23%, so that offset puts the first dots back at 70.19svh — where the
+ * reference has them, clear of the social row — while leaving ~0.2 of a viewport of
+ * solid black hanging past the foot of the page.
+ *
+ * That overhang is the whole point: the drift moves the artwork *down*, never up, so
+ * there is always black beneath it and no scroll position can open a white sliver. The
+ * clip lives here rather than on .path so none of it lands in the document's scroll
+ * height.
+ */
+.fade {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100svh;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fadeInner {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 19.56svh;
+  height: 100svh;
+}
+
+.fadeInner img {
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+}
+
+/*
+ * Desktop gets its own artwork, and needs to.
+ *
+ * The phone file is 1179x2556 stretched to fill the box. On a phone that box is nearly
+ * the same shape, so the dots come out ~12% wide — imperceptible. On a 1440x900 window
+ * the same stretch is 3.5:1 and the dots are visibly smeared into ellipses.
+ *
+ * halftone-fade-desktop.png is 16:9, and the box is sized to *match* its aspect
+ * (height = 100vw / 1.7827) so `object-fit: fill` does no stretching at all and the dots
+ * stay round. `top` then solves for the ink landing at the same 70.19svh as mobile: the
+ * ink starts 41.574% down this file, so top = 70.19svh - (0.41574 * 56.094vw).
+ *
+ * Whichever image the media query hides is `display: none`, and next/image is lazy by
+ * default, so the hidden one is never fetched on either device.
+ */
+.fadeDesktop {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .fadeInner {
+    top: calc(70.19svh - 23.319vw);
+    height: 56.094vw;
+  }
+
+  .fadeMobile {
+    display: none;
+  }
+
+  .fadeDesktop {
+    display: block;
+  }
+}
+
+/*
+ * Scroll reveal.
+ *
+ * Each element carries its own class and is observed individually, rather than the
+ * whole panel sharing one trigger. Observing the panel meant the fade fired when its
+ * top edge appeared and had finished long before `artist` (35% down the panel) or the
+ * social row (66% down) were anywhere near the screen — so on a slow scroll everything
+ * was simply already there. Per-element triggers put the fade where the eye is, and the
+ * stagger falls out of document order for free.
+ *
+ * Opacity only — .choice, .bar and .socials all carry transforms for baseline,
+ * mirroring and centring, and animating those here would fight them.
+ *
+ * .pending is applied after mount rather than being the default, so the panel renders
+ * visible for anyone without JS. See ChoosePath.tsx.
+ */
+.pending {
+  opacity: 0;
+}
+
+.revealed {
+  opacity: 1;
+}
+
+.pending,
+.revealed {
+  transition: opacity 950ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pending,
+  .revealed {
+    opacity: 1;
+    transition: none;
+  }
+}

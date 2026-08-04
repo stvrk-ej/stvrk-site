@@ -1,0 +1,179 @@
+/*
+ * Black panel — "Mobile reference 1". Source pixels are on a 1179-wide reference whose
+ * black panel is 2193 tall.
+ *
+ * Positions used to be container-query units against the panel. They're now plain
+ * lengths: the panel is exactly 100svh so `cqh` became `svh`, and `cqw` became a
+ * fraction of --content-w. That's not cosmetic — a size container applies `contain:
+ * layout`, which creates a stacking context and would isolate the layers' blend from
+ * the white panel behind them. Same reason the layers are absolutely positioned rather
+ * than sticky.
+ */
+
+.layer {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  margin-left: calc(var(--content-w) / -2);
+  width: var(--content-w);
+  height: 100svh;
+  z-index: 2;
+  /*
+   * Flips these layers white-to-black per pixel wherever the white panel has scrolled
+   * under them, so they stay readable on either side of the border. Over black it's a
+   * no-op: difference against #000 returns the source unchanged.
+   */
+  mix-blend-mode: difference;
+  /* Decorative; the nav re-enables itself below. */
+  pointer-events: none;
+  will-change: transform;
+}
+
+/*
+ * The blob runs edge to edge in the reference. Capping against svh keeps it from
+ * overflowing on a short window; at phone proportions the width term wins.
+ */
+.stage {
+  position: absolute;
+  left: 50%;
+  top: 44svh;
+  transform: translate(-50%, -50%);
+  width: min(var(--content-w), 54svh);
+  height: min(var(--content-w), 54svh);
+}
+
+/*
+ * The blob covers about 71% of the square video frame, so the logo is ~1.4x the stage
+ * for the artwork to land at reference size.
+ */
+.videoWrap {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 140.4%;
+  height: 140.4%;
+  overflow: hidden;
+}
+
+/*
+ * The video and the still frame occupy the same box. The still sits on top and is
+ * faded out once playback is confirmed — see SpinningLogo.tsx.
+ */
+.video,
+.frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  /* 102% trims the encoder's edge artifacts off all four sides. */
+  transform: translate(-50%, -50%) scale(1.02);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /*
+   * blur   — softens the halftone and lets the whites bleed into a bloom, matching the
+   *          glow on the wordmark.
+   * contrast — deepens the near-black so the key below has a clean floor to work from.
+   * luma-key — turns luminance into alpha, so the clip's rgb(3,2,4) background becomes
+   *          fully transparent rather than merely dark. That's what stops the video's
+   *          rectangle showing as an edge once the white panel is behind it.
+   *
+   * drop-shadow is deliberately not used: it would halo the rectangle, not the logo.
+   */
+  filter: blur(calc(var(--content-w) * 0.0042)) contrast(1.12)
+    url('#stvrk-luma-key');
+}
+
+/* The <filter> host: present in the DOM, never painted. */
+.filterDefs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.video {
+  z-index: 0;
+}
+
+.frame {
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 220ms ease;
+}
+
+.frameShown {
+  opacity: 1;
+}
+
+/*
+ * Wordmark. wordmark.png is 1200 x 627 cropped to its ink, which fills x 0-1194 and
+ * y 0-548 — so the ink starts at the file's top-left and the offsets below only have
+ * to account for the slack on the other two sides.
+ *
+ * Ink width 81.4% of the column, ink centred at 75.7svh (reference: 960px wide,
+ * centre y 1661).
+ */
+.wordmark {
+  position: absolute;
+  left: calc(var(--content-w) * 0.0913);
+  width: calc(var(--content-w) * 0.8174);
+  top: calc(75.7svh - var(--content-w) * 0.187);
+  /*
+   * The supplied wordmark is a light halftone that disappears into the halftone behind
+   * it. The white shadows knit the dots into solid strokes; the black ones put back the
+   * dark halo the reference uses to lift "stvrk" off the blob.
+   */
+  filter: drop-shadow(0 0 calc(var(--content-w) * 0.0022) rgba(255, 255, 255, 0.95))
+    drop-shadow(0 0 calc(var(--content-w) * 0.0022) rgba(255, 255, 255, 0.95))
+    drop-shadow(0 0 calc(var(--content-w) * 0.012) rgba(0, 0, 0, 0.7))
+    drop-shadow(0 0 calc(var(--content-w) * 0.026) rgba(0, 0, 0, 0.85));
+}
+
+.wordmark img {
+  width: 100%;
+  height: auto;
+}
+
+/* beats • sound-kits */
+.nav {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 93svh;
+  transform: translateY(calc(-1 * var(--baseline)));
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  line-height: 1;
+  font-size: calc(var(--content-w) * 0.0426);
+  pointer-events: auto;
+}
+
+.navLink {
+  color: var(--white);
+  padding: 0.6em 0.4em;
+  margin: -0.6em -0.4em;
+}
+
+.navLink:hover {
+  opacity: 0.65;
+}
+
+/* The gaps either side of the dot are uneven in the reference; kept as drawn. */
+.navLink:first-of-type {
+  margin-right: calc(var(--content-w) * 0.2706 - 0.4em);
+}
+
+.navLink:last-of-type {
+  margin-left: calc(var(--content-w) * 0.1858 - 0.4em);
+}
+
+.dot {
+  width: calc(var(--content-w) * 0.0153);
+  height: calc(var(--content-w) * 0.0153);
+  border-radius: 50%;
+  background: var(--white);
+  align-self: center;
+  flex: none;
+}

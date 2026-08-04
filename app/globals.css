@@ -1,0 +1,76 @@
+/*
+ * Global tokens.
+ *
+ * The page is two full-height panels: a black one you land on, a white one you scroll
+ * into. Each panel is its own size container, so everything inside is expressed in
+ * container units — cqw is the design column, cqh is that panel's height — and the
+ * composition scales as one piece instead of drifting apart between screen sizes.
+ *
+ * Numbers come from "Mobile reference 1" and "Mobile reference 2" (1179 x 2556), with
+ * the source pixel value in a comment wherever it isn't obvious.
+ */
+
+:root {
+  --black: #000000;
+  --white: #ffffff;
+
+  /*
+   * Type and UI ink. Deliberately not pure #000 on the white panel — at full black the
+   * choices and the social row read as harsh against the paper. A hair of warmth and a
+   * few points off the black takes the edge off without costing legibility (still ~16:1
+   * against white). --ink-contrast is the knocked-out glyph inside the social discs,
+   * off-white for the same reason.
+   */
+  --ink: #1f1d1c;
+  --ink-contrast: #f2f0ec;
+
+  /*
+   * The design column. Phones get the full viewport. Wider screens cap out, and the
+   * svh term keeps the column in proportion to the height it has to fill.
+   */
+  --content-w: min(100vw, 560px, max(280px, 62svh));
+
+  /*
+   * Distance from the top of a line box to the baseline, for EB Garamond at
+   * line-height: 1, from the font's own metrics:
+   * halfLeading + ascent = (1 - (1.007 + 0.298)) / 2 + 1.007 = 0.8545em
+   * Text is positioned by its baseline, which is how the references were measured.
+   */
+  --baseline: 0.8545em;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--black);
+  color: var(--white);
+}
+
+/*
+ * No scroll snapping. The hero is a parallax sweep now rather than two discrete
+ * panels, and snapping fights it — it yanks you past the middle of the effect, which
+ * is the part worth seeing.
+ */
+
+body {
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}

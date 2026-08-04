@@ -1,0 +1,15 @@
+/*
+ * `overflow-x: clip` rather than `hidden`: the logo is ~1.4x the column and has to be
+ * trimmed at the sides, but `hidden` would turn this into a scroll container and
+ * `contain`/`paint` variants would create a stacking context and isolate the hero
+ * layers' blend. `clip` does neither.
+ */
+.page {
+  position: relative;
+  overflow-x: clip;
+}
+
+/* Holds the first viewport open for the hero. The black comes from <body>. */
+.heroSpace {
+  height: 100svh;
+}

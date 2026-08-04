@@ -1,0 +1,32 @@
+/*
+ * Filled discs with a knocked-out glyph: 91px circles on a 1179px reference with 16px
+ * between them. That lands around 30px on a phone, so no touch-target padding is
+ * needed here the way it was at the old, smaller size.
+ */
+.list {
+  display: flex;
+  align-items: center;
+  gap: 1.38cqw;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  display: grid;
+  place-items: center;
+  width: 7.72cqw;
+  height: 7.72cqw;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--ink-contrast);
+}
+
+.link:hover {
+  opacity: 0.7;
+}
+
+.glyph {
+  width: 55%;
+  height: 55%;
+}

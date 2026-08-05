@@ -5,7 +5,6 @@ import Image from 'next/image';
 import styles from './ChoosePath.module.css';
 import SocialLinks from './SocialLinks';
 import BottomFade from './BottomFade';
-import whoAreYou from '@/public/who-are-you.png';
 import dottedBar from '@/public/dotted-bar.png';
 import dottedBar2 from '@/public/dotted-bar-2.png';
 import { BEATS_HREF, SOUNDKITS_HREF, PORTFOLIO_HREF } from '@/lib/links';
@@ -16,6 +15,33 @@ import { BEATS_HREF, SOUNDKITS_HREF, PORTFOLIO_HREF } from '@/lib/links';
  * it's still clipping the very bottom of the screen.
  */
 const TRIGGER_MARGIN = '0px 0px -22% 0px';
+
+/*
+ * Each row is a flex pair (text + bar) rather than two independently absolutely
+ * positioned elements. That's what makes the text/bar gap hold for any word length:
+ * the bar's width is "whatever space is left after the text and the gap," not a fixed
+ * cqw number tuned to one specific word. See .row in the stylesheet.
+ */
+const CHOICES = [
+  {
+    label: 'beats',
+    href: BEATS_HREF,
+    bar: dottedBar,
+    rowClass: styles.rowBeats,
+  },
+  {
+    label: 'sound-kits',
+    href: SOUNDKITS_HREF,
+    bar: dottedBar2,
+    rowClass: `${styles.rowSoundKits} ${styles.rowReverse}`,
+  },
+  {
+    label: 'portfolio',
+    href: PORTFOLIO_HREF,
+    bar: dottedBar,
+    rowClass: styles.rowPortfolio,
+  },
+];
 
 export default function ChoosePath() {
   const innerRef = useRef<HTMLDivElement>(null);
@@ -71,69 +97,27 @@ export default function ChoosePath() {
       <div className={styles.lead} />
 
       <div ref={innerRef} className={styles.inner}>
-        {/*
-         * Supplied as artwork rather than live text: the halftone-on-a-gradient
-         * treatment is baked into the PNG. The <h1> keeps it in the document outline.
-         */}
-        <h1 className={styles.question}>
-          <Image src={whoAreYou} alt="who are you?" sizes="85vw" />
-        </h1>
-
-        <a
-          className={`${styles.choice} ${styles.beats}`}
-          href={BEATS_HREF}
-          data-reveal=""
-        >
-          beats
-        </a>
-        {/*
-         * The bars go to the same place as the word beside them. Hidden from assistive
-         * tech and out of the tab order so they aren't a second stop for the same
-         * destination — they're a bigger tap target, not a separate link.
-         */}
-        <a
-          className={`${styles.bar} ${styles.beatsBar}`}
-          href={BEATS_HREF}
-          aria-hidden="true"
-          tabIndex={-1}
-          data-reveal=""
-        >
-          <Image src={dottedBar} alt="" sizes="55vw" />
-        </a>
-
-        <a
-          className={`${styles.choice} ${styles.soundKits}`}
-          href={SOUNDKITS_HREF}
-          data-reveal=""
-        >
-          sound-kits
-        </a>
-        <a
-          className={`${styles.bar} ${styles.soundKitsBar}`}
-          href={SOUNDKITS_HREF}
-          aria-hidden="true"
-          tabIndex={-1}
-          data-reveal=""
-        >
-          <Image src={dottedBar2} alt="" sizes="55vw" />
-        </a>
-
-        <a
-          className={`${styles.choice} ${styles.portfolio}`}
-          href={PORTFOLIO_HREF}
-          data-reveal=""
-        >
-          portfolio
-        </a>
-        <a
-          className={`${styles.bar} ${styles.portfolioBar}`}
-          href={PORTFOLIO_HREF}
-          aria-hidden="true"
-          tabIndex={-1}
-          data-reveal=""
-        >
-          <Image src={dottedBar} alt="" sizes="55vw" />
-        </a>
+        {CHOICES.map(({ label, href, bar, rowClass }) => (
+          <div key={label} className={`${styles.row} ${rowClass}`}>
+            <a className={styles.choice} href={href} data-reveal="">
+              {label}
+            </a>
+            {/*
+             * Goes to the same place as the word beside it. Hidden from assistive tech
+             * and out of the tab order so it isn't a second stop for the same
+             * destination — it's a bigger tap target, not a separate link.
+             */}
+            <a
+              className={styles.bar}
+              href={href}
+              aria-hidden="true"
+              tabIndex={-1}
+              data-reveal=""
+            >
+              <Image src={bar} alt="" sizes="45vw" />
+            </a>
+          </div>
+        ))}
 
         <SocialLinks className={styles.socials} data-reveal="" />
       </div>

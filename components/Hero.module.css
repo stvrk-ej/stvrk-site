@@ -168,6 +168,14 @@
   opacity: 0.65;
 }
 
+/*
+ * `align-self: center` centers the dot on the flex line's cross-size, which — measured
+ * directly, by rasterizing 'o' and 'b' and comparing their real ink to the dot's actual
+ * position — lands it centered against the ASCENDER-to-baseline span (b/t/k), just
+ * 0.14px off that. Lowercase text reads by its x-height, not its ascenders, so the dot
+ * sat 2.51px above where the eye expects the middle of the word. 0.15em (2.51px at this
+ * font-size) is that measured gap, expressed in em so it holds at any size.
+ */
 .dot {
   width: calc(var(--content-w) * 0.0153);
   height: calc(var(--content-w) * 0.0153);
@@ -175,4 +183,5 @@
   background: var(--white);
   align-self: center;
   flex: none;
+  transform: translateY(0.15em);
 }

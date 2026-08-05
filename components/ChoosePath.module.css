@@ -31,31 +31,65 @@
 }
 
 /*
- * who-are-you.png is 1400 x 312 cropped to its ink, which fills x 0-1387 and y 19-311.
- * The wrapper is sized so the *ink* comes out at 81.9cqw wide, and `top` subtracts the
- * ink's own offset inside the file so the ink centre lands at 14.19cqh.
+ * Three rows — beats / sound-kits / portfolio — replacing both the old artist/producer
+ * choice and the "who are you?" heading that used to sit above it (dropped entirely;
+ * the rows now fill the space it left). As with the rows themselves, this vertical
+ * rhythm is hand-picked, not measured off a saved reference — the mockup for this
+ * arrangement only ever existed as a pasted chat image, nothing on disk to pixel-probe.
+ *
+ * Each row is a flex pair, not two independently absolutely-positioned elements. The
+ * previous version gave the bar a fixed width tuned to "artist" and "producer"; once
+ * the words became "sound-kits" and "portfolio" — longer, and no longer the words the
+ * numbers were tuned to — the bars overlapped the text. Flex removes the word-length
+ * assumption entirely: the text takes its intrinsic width, `gap` holds a fixed
+ * distance, and the bar fills whatever is left. Alignment still zig-zags text-left/
+ * text-right/text-left via `.rowReverse`, which flips the row without touching markup
+ * order.
  */
-.question {
+.row {
   position: absolute;
-  margin: 0;
-  left: 8.65cqw;
-  width: 82.61cqw;
-  top: calc(14.19cqh - 9.766cqw);
+  left: 8.14cqw;
+  right: 8.14cqw;
+  display: flex;
+  align-items: center;
+  gap: 5.4cqw;
 }
 
-.question img {
-  width: 100%;
-  height: auto;
+.rowReverse {
+  flex-direction: row-reverse;
 }
 
-/* Text is placed by its baseline, which is how the reference was measured. */
+.rowBeats {
+  top: 14cqh;
+}
+
+.rowSoundKits {
+  top: 32cqh;
+}
+
+.rowPortfolio {
+  top: 50cqh;
+}
+
+/*
+ * Halftone-textured type, in the same spirit as the wordmark and the old "who are
+ * you?" artwork but built from a live radial-gradient rather than a baked PNG, so it
+ * works for any word. `background-size` is in `em`, so the dot pitch scales with the
+ * font size automatically. `-webkit-background-clip` is the operative one — it's the
+ * original (and still the best-supported) form of this property on iOS Safari, the
+ * browser this whole project has been built against.
+ */
 .choice {
-  position: absolute;
-  color: var(--ink);
+  margin: 0;
+  font-weight: 500;
   line-height: 1;
   white-space: nowrap;
   font-size: 14.4cqw;
-  transform: translateY(calc(-1 * var(--baseline)));
+  color: transparent;
+  background-image: radial-gradient(circle, var(--ink) 62%, transparent 68%);
+  background-size: 0.09em 0.09em;
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
 .choice:hover {
@@ -63,44 +97,17 @@
 }
 
 /*
- * Three rows now instead of two — beats / sound-kits / portfolio, replacing the old
- * artist / producer choice. Unlike the rest of this file, the vertical rhythm here
- * isn't measured off a saved reference image: the mockup for this arrangement only
- * ever existed as a pasted chat image, not a file on disk, so there was nothing to
- * pixel-probe the way earlier assets were. These are hand-picked, evenly spaced, and
- * meant to be nudged if they don't read right — not treated as a matched target the
- * way the rest of the numbers in this file are.
- *
- * Horizontal alignment keeps the original zig-zag: text-left/bar-right, then
- * text-right/bar-left, then back to text-left/bar-right.
- */
-.beats {
-  left: 8.14cqw;
-  top: 28cqh;
-}
-
-.soundKits {
-  right: 8.91cqw;
-  top: 43cqh;
-}
-
-.portfolio {
-  left: 8.14cqw;
-  top: 58cqh;
-}
-
-/*
- * Both bar files share one canvas (1200 x 225, ink 79px tall starting at the left
- * edge), so both render at the same element width and the ink comes out the same
- * height — dotted-bar-2 simply has shorter ink. 7.772cqw is the ink's own centre
- * offset inside the file, subtracted so the centreline lands relative to its row's
- * text baseline. beats and portfolio reuse dotted-bar.png (they sit on the same side);
- * sound-kits keeps dotted-bar-2.png so the middle row still reads as visually distinct.
+ * Both bar files share one canvas (1200 x 225, ink 79px tall, flush to the left edge),
+ * so at any given rendered width they come out the same height — dotted-bar-2 simply
+ * has shorter ink. `flex: 1 1 0` lets each bar fill whatever space its row's text
+ * leaves it, capped by `max-width` so a short word (few rows have one) doesn't stretch
+ * the bar implausibly wide.
  */
 .bar {
-  position: absolute;
   display: block;
-  width: 50.28cqw;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 50.28cqw;
 }
 
 .bar:hover {
@@ -110,21 +117,6 @@
 .bar img {
   width: 100%;
   height: auto;
-}
-
-.beatsBar {
-  left: 41.47cqw;
-  top: calc(25.87cqh - 7.772cqw);
-}
-
-.soundKitsBar {
-  left: 6.95cqw;
-  top: calc(40.87cqh - 7.772cqw);
-}
-
-.portfolioBar {
-  left: 41.47cqw;
-  top: calc(55.87cqh - 7.772cqw);
 }
 
 .socials {

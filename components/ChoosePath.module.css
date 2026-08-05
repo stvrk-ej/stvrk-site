@@ -11,9 +11,15 @@
   color: var(--black);
 }
 
-/* Buffer between the border and the first line of text — see ChoosePath.tsx. */
+/*
+ * Buffer between the border and the first line of text — see ChoosePath.tsx. Trimmed
+ * from 45svh: it was sized to clear the old "who are you?" artwork, which is gone, and
+ * the leftover run-up read as dead space at the top of the panel. The hero's logo layer
+ * is the thing this actually has to stay clear of; it bottoms out ~0.36 of a viewport
+ * into this panel, so 40svh still leaves the first row well below it.
+ */
 .lead {
-  height: 45svh;
+  height: 40svh;
 }
 
 /*
@@ -60,36 +66,33 @@
 }
 
 .rowBeats {
-  top: 14cqh;
+  top: 8cqh;
 }
 
 .rowSoundKits {
-  top: 32cqh;
+  top: 26cqh;
 }
 
 .rowPortfolio {
-  top: 50cqh;
+  top: 44cqh;
 }
 
 /*
- * Halftone-textured type, in the same spirit as the wordmark and the old "who are
- * you?" artwork but built from a live radial-gradient rather than a baked PNG, so it
- * works for any word. `background-size` is in `em`, so the dot pitch scales with the
- * font size automatically. `-webkit-background-clip` is the operative one — it's the
- * original (and still the best-supported) form of this property on iOS Safari, the
- * browser this whole project has been built against.
+ * Solid type. A halftone dot fill (background-clip: text over a radial-gradient) was
+ * tried here to echo the wordmark's texture and didn't work — at this size the dots
+ * chewed holes in the letterforms rather than reading as grain. A baked PNG can carry
+ * that texture because its dots are tuned to specific glyphs; a live CSS pattern
+ * applied to arbitrary words can't. Weight is doing the work instead: 600, up from the
+ * 500 the textured version used, since the dot fill had been supplying some of the
+ * apparent heft.
  */
 .choice {
   margin: 0;
-  font-weight: 500;
+  color: var(--ink);
+  font-weight: 600;
   line-height: 1;
   white-space: nowrap;
   font-size: 14.4cqw;
-  color: transparent;
-  background-image: radial-gradient(circle, var(--ink) 62%, transparent 68%);
-  background-size: 0.09em 0.09em;
-  -webkit-background-clip: text;
-  background-clip: text;
 }
 
 .choice:hover {
@@ -122,7 +125,7 @@
 .socials {
   position: absolute;
   left: 50%;
-  top: 65.83cqh;
+  top: 59.83cqh;
   transform: translate(-50%, -50%);
   z-index: 1;
 }

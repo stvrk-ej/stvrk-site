@@ -12,7 +12,9 @@ import FilmGrain from '@/components/FilmGrain';
  */
 const ebGaramond = EB_Garamond({
   subsets: ['latin'],
-  weight: ['400', '500'],
+  // 600 carries the white panel's choices. They used to get their weight from a halftone
+  // dot fill; with that gone, the type itself has to do the work.
+  weight: ['400', '500', '600'],
   display: 'swap',
   variable: '--font-garamond',
 });

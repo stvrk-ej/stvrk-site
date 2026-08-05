@@ -1,10 +1,17 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { Fragment, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import styles from './Hero.module.css';
 import SpinningLogo from './SpinningLogo';
 import wordmark from '@/public/wordmark.png';
+import { BEATS_HREF, SOUNDKITS_HREF, PORTFOLIO_HREF } from '@/lib/links';
+
+const NAV_ITEMS = [
+  { label: 'beats', href: BEATS_HREF },
+  { label: 'sound-kits', href: SOUNDKITS_HREF },
+  { label: 'portfolio', href: PORTFOLIO_HREF },
+];
 
 /*
  * The hero, as three parallax layers.
@@ -124,16 +131,14 @@ export default function Hero() {
         </div>
 
         <nav className={styles.nav} aria-label="Store">
-          <a
-            className={styles.navLink}
-            href="https://www.beatstars.com/stvrkoutside"
-          >
-            beats
-          </a>
-          <span className={styles.dot} aria-hidden="true" />
-          <a className={styles.navLink} href="https://payhip.com/b/tlsq9">
-            sound-kits
-          </a>
+          {NAV_ITEMS.map((item, i) => (
+            <Fragment key={item.label}>
+              {i > 0 && <span className={styles.dot} aria-hidden="true" />}
+              <a className={styles.navLink} href={item.href}>
+                {item.label}
+              </a>
+            </Fragment>
+          ))}
         </nav>
       </div>
     </>

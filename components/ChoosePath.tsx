@@ -8,9 +8,7 @@ import BottomFade from './BottomFade';
 import whoAreYou from '@/public/who-are-you.png';
 import dottedBar from '@/public/dotted-bar.png';
 import dottedBar2 from '@/public/dotted-bar-2.png';
-
-const ARTIST_HREF = 'https://www.beatstars.com/stvrkoutside';
-const PRODUCER_HREF = 'https://payhip.com/b/tlsq9';
+import { BEATS_HREF, SOUNDKITS_HREF, PORTFOLIO_HREF } from '@/lib/links';
 
 /*
  * How far into the viewport an element has to be before it starts fading. Negative
@@ -82,11 +80,11 @@ export default function ChoosePath() {
         </h1>
 
         <a
-          className={`${styles.choice} ${styles.artist}`}
-          href={ARTIST_HREF}
+          className={`${styles.choice} ${styles.beats}`}
+          href={BEATS_HREF}
           data-reveal=""
         >
-          artist
+          beats
         </a>
         {/*
          * The bars go to the same place as the word beside them. Hidden from assistive
@@ -94,8 +92,8 @@ export default function ChoosePath() {
          * destination — they're a bigger tap target, not a separate link.
          */}
         <a
-          className={`${styles.bar} ${styles.artistBar}`}
-          href={ARTIST_HREF}
+          className={`${styles.bar} ${styles.beatsBar}`}
+          href={BEATS_HREF}
           aria-hidden="true"
           tabIndex={-1}
           data-reveal=""
@@ -104,20 +102,37 @@ export default function ChoosePath() {
         </a>
 
         <a
-          className={`${styles.choice} ${styles.producer}`}
-          href={PRODUCER_HREF}
+          className={`${styles.choice} ${styles.soundKits}`}
+          href={SOUNDKITS_HREF}
           data-reveal=""
         >
-          producer
+          sound-kits
         </a>
         <a
-          className={`${styles.bar} ${styles.producerBar}`}
-          href={PRODUCER_HREF}
+          className={`${styles.bar} ${styles.soundKitsBar}`}
+          href={SOUNDKITS_HREF}
           aria-hidden="true"
           tabIndex={-1}
           data-reveal=""
         >
           <Image src={dottedBar2} alt="" sizes="55vw" />
+        </a>
+
+        <a
+          className={`${styles.choice} ${styles.portfolio}`}
+          href={PORTFOLIO_HREF}
+          data-reveal=""
+        >
+          portfolio
+        </a>
+        <a
+          className={`${styles.bar} ${styles.portfolioBar}`}
+          href={PORTFOLIO_HREF}
+          aria-hidden="true"
+          tabIndex={-1}
+          data-reveal=""
+        >
+          <Image src={dottedBar} alt="" sizes="55vw" />
         </a>
 
         <SocialLinks className={styles.socials} data-reveal="" />

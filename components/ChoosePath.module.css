@@ -62,21 +62,40 @@
   opacity: 0.6;
 }
 
-.artist {
+/*
+ * Three rows now instead of two — beats / sound-kits / portfolio, replacing the old
+ * artist / producer choice. Unlike the rest of this file, the vertical rhythm here
+ * isn't measured off a saved reference image: the mockup for this arrangement only
+ * ever existed as a pasted chat image, not a file on disk, so there was nothing to
+ * pixel-probe the way earlier assets were. These are hand-picked, evenly spaced, and
+ * meant to be nudged if they don't read right — not treated as a matched target the
+ * way the rest of the numbers in this file are.
+ *
+ * Horizontal alignment keeps the original zig-zag: text-left/bar-right, then
+ * text-right/bar-left, then back to text-left/bar-right.
+ */
+.beats {
   left: 8.14cqw;
-  top: 35.61cqh;
+  top: 28cqh;
 }
 
-.producer {
+.soundKits {
   right: 8.91cqw;
-  top: 50.18cqh;
+  top: 43cqh;
+}
+
+.portfolio {
+  left: 8.14cqw;
+  top: 58cqh;
 }
 
 /*
  * Both bar files share one canvas (1200 x 225, ink 79px tall starting at the left
  * edge), so both render at the same element width and the ink comes out the same
  * height — dotted-bar-2 simply has shorter ink. 7.772cqw is the ink's own centre
- * offset inside the file, subtracted so the centreline lands where the reference has it.
+ * offset inside the file, subtracted so the centreline lands relative to its row's
+ * text baseline. beats and portfolio reuse dotted-bar.png (they sit on the same side);
+ * sound-kits keeps dotted-bar-2.png so the middle row still reads as visually distinct.
  */
 .bar {
   position: absolute;
@@ -93,14 +112,19 @@
   height: auto;
 }
 
-.artistBar {
+.beatsBar {
   left: 41.47cqw;
-  top: calc(33.48cqh - 7.772cqw);
+  top: calc(25.87cqh - 7.772cqw);
 }
 
-.producerBar {
+.soundKitsBar {
   left: 6.95cqw;
-  top: calc(48.05cqh - 7.772cqw);
+  top: calc(40.87cqh - 7.772cqw);
+}
+
+.portfolioBar {
+  left: 41.47cqw;
+  top: calc(55.87cqh - 7.772cqw);
 }
 
 .socials {

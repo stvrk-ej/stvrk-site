@@ -30,6 +30,19 @@
 }
 
 /*
+ * The nav wipes away under the border instead of inverting with it.
+ *
+ * `lighten` keeps the lighter of source and backdrop per pixel. The nav is white, so
+ * over the black hero it stays white and fully visible; over the white panel both sides
+ * are already 255 and it vanishes into it. Same crisp per-pixel boundary the difference
+ * blend gives the logo and wordmark — it just erases along that line rather than
+ * flipping across it. Only this layer changes; the logo and wordmark keep `difference`.
+ */
+.navLayer {
+  mix-blend-mode: lighten;
+}
+
+/*
  * The blob runs edge to edge in the reference. Capping against svh keeps it from
  * overflowing on a short window; at phone proportions the width term wins.
  */

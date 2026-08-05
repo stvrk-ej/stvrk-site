@@ -100,17 +100,41 @@
 }
 
 /*
- * Both bar files share one canvas (1200 x 225, ink 79px tall, flush to the left edge),
- * so at any given rendered width they come out the same height — dotted-bar-2 simply
- * has shorter ink. `flex: 1 1 0` lets each bar fill whatever space its row's text
- * leaves it, capped by `max-width` so a short word (few rows have one) doesn't stretch
- * the bar implausibly wide.
+ * The bars are CROPPED to length, never scaled to it.
+ *
+ * They used to be `width: 100%; height: auto` inside a flex item, so the graphic scaled
+ * with whatever horizontal space its row's word left over. That made the ink 12.6px tall
+ * next to "beats", 6.7px next to "portfolio" and 4.3px next to "sound-kits" — a 3x
+ * spread, which is what read as crude. Squeezing the long bars horizontally instead
+ * would have been worse: same artwork, visibly distorted dots.
+ *
+ * Now the box has a FIXED height and `object-fit: cover`, so the image always renders at
+ * one scale — natural aspect, identical dot size in every row — and the box simply shows
+ * less of it. 9.1cqw is "beats" as it renders today (35.8px box, 12.6px ink at 393px
+ * wide), since that's the row that already looked right; `max-width: 48.6cqw` is that
+ * same image's natural width at that height, so the box can never out-run the artwork
+ * and force `cover` to scale up and crop vertically instead.
+ *
+ * Each file's gradient runs dark-to-faint toward its row's word already (dotted-bar is
+ * dark-right and sits right of left-aligned words; dotted-bar-2 is dark-left and sits
+ * left of the right-aligned one). `object-position` anchors the dark end to the outer
+ * edge so the crop always eats the faint end. The mask then guarantees the cut is clean:
+ * on a heavily cropped row the crop would otherwise land where the ink is still solid and
+ * leave a hard vertical edge. Static — no animation beyond the existing reveal fade.
  */
 .bar {
   display: block;
   flex: 1 1 0;
   min-width: 0;
-  max-width: 50.28cqw;
+  max-width: 48.6cqw;
+  height: 9.1cqw;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 5cqw);
+  mask-image: linear-gradient(to right, transparent 0, #000 5cqw);
+}
+
+.rowReverse .bar {
+  -webkit-mask-image: linear-gradient(to left, transparent 0, #000 5cqw);
+  mask-image: linear-gradient(to left, transparent 0, #000 5cqw);
 }
 
 .bar:hover {
@@ -119,13 +143,24 @@
 
 .bar img {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: right center;
 }
 
+.rowReverse .bar img {
+  object-position: left center;
+}
+
+/*
+ * Sat 49px below "portfolio" and 64px above the halftone — closer to the row above it
+ * than to anything else, which is what made it feel wedged in. Down 3cqh evens that out
+ * without crowding the halftone, whose first dots are near-invisible anyway.
+ */
 .socials {
   position: absolute;
   left: 50%;
-  top: 59.83cqh;
+  top: 62.83cqh;
   transform: translate(-50%, -50%);
   z-index: 1;
 }

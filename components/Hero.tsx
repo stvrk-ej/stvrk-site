@@ -47,6 +47,11 @@ const FADE_END = 1.4;
 export default function Hero() {
   const logoRef = useRef<HTMLDivElement>(null);
   const markRef = useRef<HTMLDivElement>(null);
+  /*
+   * The nav rides with the mark layer but is a separate element so it can carry its own
+   * blend mode — see .navLayer in the stylesheet. Same rate, so they move as one.
+   */
+  const navRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -66,9 +71,14 @@ export default function Hero() {
         logoRef.current.style.transform = `translate3d(0, ${s * (1 - LOGO_RATE)}px, 0)`;
         logoRef.current.style.opacity = opacity;
       }
+      const markShift = `translate3d(0, ${s * (1 - MARK_RATE)}px, 0)`;
       if (markRef.current) {
-        markRef.current.style.transform = `translate3d(0, ${s * (1 - MARK_RATE)}px, 0)`;
+        markRef.current.style.transform = markShift;
         markRef.current.style.opacity = opacity;
+      }
+      if (navRef.current) {
+        navRef.current.style.transform = markShift;
+        navRef.current.style.opacity = opacity;
       }
     };
     const onScroll = () => {
@@ -129,7 +139,9 @@ export default function Hero() {
         <div className={styles.wordmark}>
           <Image src={wordmark} alt="stvrk" priority sizes="85vw" />
         </div>
+      </div>
 
+      <div ref={navRef} className={`${styles.layer} ${styles.navLayer}`}>
         <nav className={styles.nav} aria-label="Store">
           {NAV_ITEMS.map((item, i) => (
             <Fragment key={item.label}>
